@@ -6,17 +6,20 @@ from app.config import settings
 class OpenSearchVectorClient:
     def __init__(self):
         credentials = boto3.Session().get_credentials()
-        auth = AWSV4SignerAuth(credentials, settings.AWS_REGION, "aoss")
+        auth = AWSV4SignerAuth(credentials, settings.AWS_REGION, "aoss") if credentials else None
         host = settings.OPENSEARCH_ENDPOINT.replace("https://", "")
 
-        self.client = OpenSearch(
-            hosts=[{"host": host, "port": 443}],
-            http_auth=auth,
-            use_ssl=True,
-            verify_certs=True,
-            connection_class=RequestsHttpConnection,
-            timeout=15
-        )
+        if auth:
+            self.client = OpenSearch(
+                hosts=[{"host": host, "port": 443}],
+                http_auth=auth,
+                use_ssl=True,
+                verify_certs=True,
+                connection_class=RequestsHttpConnection,
+                timeout=15
+            )
+        else:
+            self.client = None
         self.index_name = settings.OPENSEARCH_INDEX
 
     def search_similar_vectors(

@@ -22,6 +22,12 @@ jobs:
         run: |
           pip install -r app/requirements.txt
       - name: Run Test Suite
+        env:
+          AWS_ACCESS_KEY_ID: mock-key-id
+          AWS_SECRET_ACCESS_KEY: mock-secret-key
+          AWS_DEFAULT_REGION: us-east-1
+          POLICY_STORE_ID: mock-policy-store
+          OPENSEARCH_ENDPOINT: https://mock.us-east-1.aoss.amazonaws.com
         run: |
           PYTHONPATH=. pytest tests/test_rag.py -v
 
