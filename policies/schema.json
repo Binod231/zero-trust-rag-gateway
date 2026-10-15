@@ -1,0 +1,56 @@
+{
+  "Enterprise": {
+    "entityTypes": {
+      "User": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "department": { "type": "String" },
+            "clearanceLevel": { "type": "Long" },
+            "tenantId": { "type": "String" },
+            "role": { "type": "String" }
+          }
+        }
+      },
+      "VectorDocument": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "tenantId": { "type": "String" },
+            "department": { "type": "String" },
+            "classificationLevel": { "type": "Long" }
+          }
+        }
+      },
+      "TenantSpace": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "tenantId": { "type": "String" }
+          }
+        }
+      }
+    },
+    "actions": {
+      "Query": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["TenantSpace"],
+          "context": {
+            "type": "Record",
+            "attributes": {
+              "mfaAuthenticated": { "type": "Boolean" },
+              "networkSource": { "type": "String" }
+            }
+          }
+        }
+      },
+      "Retrieve": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["VectorDocument"]
+        }
+      }
+    }
+  }
+}
