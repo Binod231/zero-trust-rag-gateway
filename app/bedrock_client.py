@@ -29,26 +29,19 @@ class BedrockRAGClient:
         return json.loads(response["body"].read())["embedding"]
 
     def stream_converse_rag(self, user_prompt: str, context_chunks: List[str]) -> Generator[str, None, None]:
-        formatted_context = "
-
----
-
-".join(
+        formatted_context = "\n\n---\n\n".join(
             [f"[Document Reference {i+1}]: {chunk}" for i, chunk in enumerate(context_chunks)]
         )
+
+        messages = [{
+            "role": "user",
+            "content": [{"text": f"Context References:\n{formatted_context}\n\nQuery: {user_prompt}"}]
+        }]
         system_message = (
             "You are an enterprise AI assistant operating within a strict Zero-Trust enclave. "
             "Answer the query solely using the verified references below. "
             "If unavailable, state that the information cannot be found."
-        )
-        messages = [{
-            "role": "user",
-            "content": [{"text": f"Context References:
-{formatted_context}
-
-Query: {user_prompt}"}]
-        }]
-
+        )   
         try:
             yield from self._invoke_converse_stream(settings.BEDROCK_PRIMARY_MODEL, system_message, messages)
         except ClientError as e:

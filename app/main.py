@@ -53,11 +53,7 @@ async def execute_rag_query(request: QueryRequest):
     context_texts = [d["content"] for d in verified]
     def event_stream():
         for token in bedrock_client.stream_converse_rag(request.prompt, context_texts):
-            yield f"data: {token}
-
-"
-        yield "data: [DONE]
-
-"
+            yield f"data: {token}\n\n"
+        yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
